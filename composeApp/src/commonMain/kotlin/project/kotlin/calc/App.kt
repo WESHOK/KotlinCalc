@@ -1,7 +1,5 @@
 package project.kotlin.calc
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,25 +16,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlincalc.composeapp.generated.resources.Res
-import kotlincalc.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        val showContent by remember { mutableStateOf(false) }
+        var input by remember { mutableStateOf("") }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Column(modifier = Modifier.padding(16.dp)) {
-                var number by remember { mutableStateOf("") }
-
                 OutlinedTextField(
-                    value = number,
+                    value = input,
                     onValueChange = {
-                        if (it.all { char -> char.isDigit() }) {
-                            number = it
+                        fun isArithmeticOperator(c: Char): Boolean {
+                            val operators = setOf('/', '*', '+', '-')
+                            return c in operators
+                        }
+                        if (it.all { char -> char.isDigit() or isArithmeticOperator(char) }) {
+                            input = it
                         }
                     },
                     label = { Text("Вводите числа") },
@@ -44,27 +41,20 @@ fun App() {
                 )
             }
             Row {
-                Button(onClick = { println("thats a plus!") }) {
+                Button(onClick = { input += '+' }) {
                     Text("+")
                 }
-                Button(onClick = { println("thats a minus!") }) {
+                Button(onClick = { input += '-' }) {
                     Text("-")
                 }
-                Button(onClick = { println("thats a multiply!") }) {
+                Button(onClick = { input += '*' }) {
                     Text("*")
                 }
-                Button(onClick = { println("thats a divide!") }) {
+                Button(onClick = { input += '/' }) {
                     Text("/")
                 }
-                Button(onClick = { println("thats a equality button!") }) {
+                Button(onClick = { input += '=' }) {
                     Text("=")
-                }
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
                 }
             }
         }
