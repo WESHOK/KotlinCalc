@@ -67,7 +67,7 @@ kotlin {
 
 android {
     namespace = "project.kotlin.calc"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdkVersion(libs.versions.android.compileSdk.get().toInt())
 
     defaultConfig {
         applicationId = "project.kotlin.calc"
@@ -90,6 +90,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildToolsVersion = "35.0.1"
 }
 
 dependencies {
