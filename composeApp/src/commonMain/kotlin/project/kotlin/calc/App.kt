@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -23,21 +24,29 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun App() {
     MaterialTheme {
         var input by remember { mutableStateOf("") }
+        var count by remember { mutableStateOf(0) }
+
+        fun Char.isArithmetic(): Boolean {
+            return this in setOf('/', '*', '+', '-')
+        }
+
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Row(modifier = Modifier.padding(16.dp)) {
                 OutlinedTextField(
                     value = input,
                     onValueChange = {
-                        fun isArithmeticOperator(c: Char): Boolean {
-                            val operators = setOf('/', '*', '+', '-')
-                            return c in operators
-                        }
-                        if (it.all { char -> char.isDigit() or isArithmeticOperator(char) }) {
+                        if (it.all { char -> char.isDigit() or char.isArithmetic() }) {
                             input = it
                         }
                     },
                     label = { Text("Вводите числа") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.width(200.dp)
+                )
+                Text(
+                    "Result: $count",
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(16.dp)
                 )
             }
             Row {
@@ -53,7 +62,17 @@ fun App() {
                 Button(onClick = { input += '/' }) {
                     Text("/")
                 }
-                Button(onClick = { input += '=' }) {
+                Button(onClick = {
+                    println(input)
+                    val digits = input.split("[*/+-]".toRegex(), limit = 2).map { it.toInt() }
+                    when (input.filter { it.isArithmetic() }) {
+                        "+" -> count = digits[0] + digits[1]
+                        "-" -> count = digits[0] - digits[1]
+                        "*" -> count = digits[0] * digits[1]
+                        "/" -> count = digits[0] / digits[1]
+                    }
+                    input = ""
+                }) {
                     Text("=")
                 }
             }
