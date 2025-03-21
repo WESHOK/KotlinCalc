@@ -24,7 +24,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun App() {
     MaterialTheme {
         var input by remember { mutableStateOf("") }
-        var count by remember { mutableStateOf(0) }
+        var count by remember { mutableStateOf("") }
 
         fun Char.isArithmetic(): Boolean {
             return this in setOf('/', '*', '+', '-')
@@ -63,13 +63,13 @@ fun App() {
                     Text("/")
                 }
                 Button(onClick = {
-                    println(input)
-                    val digits = input.split("[*/+-]".toRegex(), limit = 2).map { it.toInt() }
+                    val digits = input.split("[*/+-]".toRegex(), limit = 2).map { it.toLong() }
+
                     when (input.filter { it.isArithmetic() }) {
-                        "+" -> count = digits[0] + digits[1]
-                        "-" -> count = digits[0] - digits[1]
-                        "*" -> count = digits[0] * digits[1]
-                        "/" -> count = digits[0] / digits[1]
+                        "+" -> count = try { (digits[0] + digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                        "-" -> count = try { (digits[0] - digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                        "*" -> count = try { (digits[0] * digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                        "/" -> count = try { (digits[0] / digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
                     }
                     input = ""
                 }) {
