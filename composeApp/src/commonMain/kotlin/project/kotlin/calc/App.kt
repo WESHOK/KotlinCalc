@@ -1,5 +1,6 @@
 package project.kotlin.calc
 
+import kotlin.math.pow
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +24,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     MaterialTheme {
-        var input by remember { mutableStateOf("") }
+        var output by remember { mutableStateOf("") }
         var count by remember { mutableStateOf("") }
 
         fun Char.isArithmetic(): Boolean {
@@ -33,10 +34,10 @@ fun App() {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Row(modifier = Modifier.padding(16.dp)) {
                 OutlinedTextField(
-                    value = input,
+                    value = output,
                     onValueChange = {
-                        if (it.all { char -> char.isDigit() or char.isArithmetic() }) {
-                            input = it
+                        if (it.all { char -> char.isDigit() or char.isArithmetic() or (char in setOf('.', ',')) }) {
+                            output = it.replace(',', '.')
                         }
                     },
                     label = { Text("Вводите числа") },
@@ -50,30 +51,75 @@ fun App() {
                 )
             }
             Row {
-                Button(onClick = { input += '+' }) {
+                Button(onClick = { output += '+' }) {
                     Text("+")
                 }
-                Button(onClick = { input += '-' }) {
+                Button(onClick = { output += '-' }) {
                     Text("-")
                 }
-                Button(onClick = { input += '*' }) {
+                Button(onClick = { output += '*' }) {
                     Text("*")
                 }
-                Button(onClick = { input += '/' }) {
+                Button(onClick = { output += '/' }) {
                     Text("/")
                 }
                 Button(onClick = {
-                    val digits = input.split("[*/+-]".toRegex(), limit = 2).map { it.toLong() }
+                    val digits = output.split("[*/+-]".toRegex(), limit = 2).map { it.toDouble() }
 
-                    when (input.filter { it.isArithmetic() }) {
+                    when (output.filter { it.isArithmetic() }) {
                         "+" -> count = try { (digits[0] + digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
                         "-" -> count = try { (digits[0] - digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
                         "*" -> count = try { (digits[0] * digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
                         "/" -> count = try { (digits[0] / digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                        "^" -> count = try { digits[0].pow(digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
                     }
-                    input = ""
+                    output = ""
                 }) {
                     Text("=")
+                }
+            }
+            Row {
+                Button(onClick = { output += '7' }) {
+                    Text("7")
+                }
+                Button(onClick = { output += '8' }) {
+                    Text("8")
+                }
+                Button(onClick = { output += '9' }) {
+                    Text("9")
+                }
+            }
+            Row {
+                Button(onClick = { output += '6' }) {
+                    Text("6")
+                }
+                Button(onClick = { output += '5' }) {
+                    Text("5")
+                }
+                Button(onClick = { output += '4' }) {
+                    Text("4")
+                }
+            }
+            Row {
+                Button(onClick = { output += '3' }) {
+                    Text("3")
+                }
+                Button(onClick = { output += '2' }) {
+                    Text("2")
+                }
+                Button(onClick = { output += '1' }) {
+                    Text("1")
+                }
+            }
+            Row {
+                Button(onClick = { output += '0' }) {
+                    Text("0")
+                }
+                Button(onClick = { output += '.' }) {
+                    Text(".")
+                }
+                Button(onClick = { output = "" }) {
+                    Text("C")
                 }
             }
         }
