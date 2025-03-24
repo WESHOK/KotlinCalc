@@ -36,7 +36,7 @@ fun App() {
                 OutlinedTextField(
                     value = output,
                     onValueChange = {
-                        if (it.all { char -> char.isDigit() or char.isArithmetic() or (char in setOf('.', ',')) }) {
+                        if (it.all { char -> char.isDigit() or char.isArithmetic() or (char in setOf(',', '.')) }) {
                             output = it.replace(',', '.')
                         }
                     },
@@ -62,6 +62,9 @@ fun App() {
                 }
                 Button(onClick = { output += '/' }) {
                     Text("/")
+                }
+                Button(onClick = { output += '^' }) {
+                    Text("^")
                 }
                 Button(onClick = {
                     val digits = output.split("[*/+-]".toRegex(), limit = 2).map { it.toDouble() }
