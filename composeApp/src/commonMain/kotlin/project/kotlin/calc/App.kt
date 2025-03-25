@@ -17,7 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.input.key.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -28,7 +31,20 @@ fun App() {
         var count by remember { mutableStateOf("") }
 
         fun Char.isArithmetic(): Boolean {
-            return this in setOf('/', '*', '+', '-')
+            return this in setOf('/', '*', '+', '-', '^')
+        }
+
+        fun calculate() {
+            val digits = output.split("[*/+^-]".toRegex(), limit = 2).map { it.toDouble() }
+
+            when (output.filter { it.isArithmetic() }) {
+                "+" -> count = try { (digits[0] + digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                "-" -> count = try { (digits[0] - digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                "*" -> count = try { (digits[0] * digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                "/" -> count = try { (digits[0] / digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                "^" -> count = try { digits[0].pow(digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+            }
+            output = ""
         }
 
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -66,18 +82,15 @@ fun App() {
                 Button(onClick = { output += '^' }) {
                     Text("^")
                 }
-                Button(onClick = {
-                    val digits = output.split("[*/+-]".toRegex(), limit = 2).map { it.toDouble() }
-
-                    when (output.filter { it.isArithmetic() }) {
-                        "+" -> count = try { (digits[0] + digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                        "-" -> count = try { (digits[0] - digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                        "*" -> count = try { (digits[0] * digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                        "/" -> count = try { (digits[0] / digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                        "^" -> count = try { digits[0].pow(digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                    }
-                    output = ""
-                }) {
+                Button(onClick = { calculate() },
+                    modifier = Modifier.onKeyEvent { keyEvent ->
+                        if (keyEvent.key == Key.Enter && keyEvent.type == KeyEventType.KeyDown) {
+                            // Simulate Button click
+                            calculate()
+                            true // Consume the event
+                        } else {
+                            false
+                        } }) {
                     Text("=")
                 }
             }
