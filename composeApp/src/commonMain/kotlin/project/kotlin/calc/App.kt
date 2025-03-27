@@ -37,11 +37,11 @@ fun App() {
             val digits = input.split("[*/+^-]".toRegex(), limit = 2).map { it.toDouble() }
 
             when (input.filter { it.isArithmetic() }) {
-                "+" -> count = try { (digits[0] + digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                "-" -> count = try { (digits[0] - digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                "*" -> count = try { (digits[0] * digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                "/" -> count = try { (digits[0] / digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
-                "^" -> count = try { digits[0].pow(digits[1]).toString() } catch (e: ArithmeticException) { "NaN" }
+                "+" -> count = try { (digits[0] + digits[1]).toString().removeSuffix(".0") } catch (e: ArithmeticException) { "NaN" }
+                "-" -> count = try { (digits[0] - digits[1]).toString().removeSuffix(".0") } catch (e: ArithmeticException) { "NaN" }
+                "*" -> count = try { (digits[0] * digits[1]).toString().removeSuffix(".0") } catch (e: ArithmeticException) { "NaN" }
+                "/" -> count = try { (digits[0] / digits[1]).toString().removeSuffix(".0") } catch (e: ArithmeticException) { "NaN" }
+                "^" -> count = try { digits[0].pow(digits[1]).toString().removeSuffix(".0") } catch (e: ArithmeticException) { "NaN" }
             }
             input = ""
         }
